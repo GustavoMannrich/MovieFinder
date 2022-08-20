@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/MovieFinder/static/css/main.61a5126b.css",
+    "main.js": "/MovieFinder/static/js/main.c576a2da.js",
+    "index.html": "/MovieFinder/index.html",
+    "main.61a5126b.css.map": "/MovieFinder/static/css/main.61a5126b.css.map",
+    "main.c576a2da.js.map": "/MovieFinder/static/js/main.c576a2da.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.61a5126b.css",
+    "static/js/main.c576a2da.js"
+  ]
+}
