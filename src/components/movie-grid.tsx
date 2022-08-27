@@ -1,41 +1,75 @@
-import { MDBRow, MDBCol } from 'mdb-react-ui-kit';
-import Movie from './movie';
+import '../styles/main.css';
+import '../styles/movie-grid.css';
+import { MDBRow, MDBCol, MDBContainer, MDBSpinner } from 'mdb-react-ui-kit';
+import Movie from './movie-card';
+import { useTypedSelector } from '../hooks/useTypedSelector';
+import Alert from 'react-bootstrap/Alert';
+import { IFilter } from './content';
+import { useEffect } from 'react';
+import CustomPagination from './custom-pagination';
 
-const movieGrid = () => {
+interface IFiltro {
+    filterState: IFilter;
+    setFilterState: React.Dispatch<React.SetStateAction<IFilter>>;
+}
+
+const MovieGrid: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
+    const { data, error, loading } = useTypedSelector(
+        (state) => state.repositories
+    );
+
+    useEffect(() => {
+        setFilterState({
+            genero: filterState.genero,
+            adulto: filterState.adulto,
+            sort: filterState.sort,
+            pessoa: filterState.pessoa,
+            dataInicial: filterState.dataInicial,
+            dataFinal: filterState.dataFinal,
+            voteCount: filterState.voteCount,
+        });
+    }, [data]);
+
     return (
-        <MDBRow className="row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 m-3">
-            <MDBCol>
-                <Movie />
-            </MDBCol>
-            <MDBCol>
-                <Movie />
-            </MDBCol>
-            <MDBCol>
-                <Movie />
-            </MDBCol>
-            <MDBCol>
-                <Movie />
-            </MDBCol>
-            <MDBCol>
-                <Movie />
-            </MDBCol>
-            <MDBCol>
-                <Movie />
-            </MDBCol>
-            <MDBCol>
-                <Movie />
-            </MDBCol>
-            <MDBCol>
-                <Movie />
-            </MDBCol>
-            <MDBCol>
-                <Movie />
-            </MDBCol>
-            <MDBCol>
-                <Movie />
-            </MDBCol>
-        </MDBRow>
+        <div>
+            {error && <Alert variant="danger">{error}</Alert>}
+            {loading && (
+                <div className="centralizar">
+                    <MDBSpinner role="status" color="dark">
+                        <span className="visually-hidden">Loading...</span>
+                    </MDBSpinner>
+                </div>
+            )}
+            {!error && !loading && (
+                <MDBContainer fluid>
+                    <CustomPagination
+                        filterState={filterState}
+                        setFilterState={setFilterState}
+                    />
+                    <MDBRow className="col-12  g-3 m-0">
+                        {data.movie_details.map((movie) => (
+                            <MDBCol key={movie.id}>
+                                <Movie
+                                    name={movie.title}
+                                    imageSRC={movie.poster_path}
+                                    releaseDate={movie.release_date}
+                                    budget={movie.budget}
+                                    revenue={movie.revenue}
+                                    rating={movie.vote_average}
+                                    tagline={movie.tagline}
+                                    id={movie.id}
+                                />
+                            </MDBCol>
+                        ))}
+                    </MDBRow>
+                    <CustomPagination
+                        filterState={filterState}
+                        setFilterState={setFilterState}
+                    />
+                </MDBContainer>
+            )}
+        </div>
     );
 };
 
-export default movieGrid;
+export default MovieGrid;

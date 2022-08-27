@@ -1,0 +1,12 @@
+.page-item.active .page-link {
+    background-color: #00b74a;
+}
+
+.pageNumber:hover {
+    background-color: gray;
+    cursor: pointer;
+}
+
+.pagination {
+    padding: 0;
+}

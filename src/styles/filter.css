@@ -1,0 +1,21 @@
+.filterCard {
+    min-width: 300px;
+}
+
+.onTop {
+    z-index: 5;
+}
+
+.react-datepicker__input-container {
+    display: none;
+}
+
+#data > div {
+    display: inherit;
+}
+
+.rangeLabel {
+    color: white;
+    margin: 0;
+    margin-top: 10px;
+}
