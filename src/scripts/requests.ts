@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require("axios");
 
 interface IItem {
     id: number;
@@ -11,7 +11,7 @@ export const getGeneros = async (): Promise<IItems> => {
     const generos: IItems = [];
 
     await axios
-        .get('http://localhost:3001/generos')
+        .get("http://localhost:3001/generos")
         .then((response: any) => {
             response.data.genres.forEach((g: IItem) => {
                 generos.push(g);
@@ -78,7 +78,7 @@ export const getMovies = async (
     };
 
     await axios
-        .get('http://localhost:3001/descobrir', {
+        .get("http://localhost:3001/descobrir", {
             params: {
                 genero: genero,
                 adult: adult,
@@ -116,7 +116,7 @@ export const getMoviesByKeyword = async (keyword: string) => {
     }
 
     await axios
-        .get('http://localhost:3001/moviesByKeyword', {
+        .get("http://localhost:3001/moviesByKeyword", {
             params: {
                 keyword: keyword,
             },
@@ -145,7 +145,7 @@ export const getPeopleByKeyword = async (keyword: string) => {
     }
 
     await axios
-        .get('http://localhost:3001/peopleByKeyword', {
+        .get("http://localhost:3001/peopleByKeyword", {
             params: {
                 keyword: keyword,
             },
@@ -220,7 +220,7 @@ export const getMovieDetails = async (id: number): Promise<IMovie | null> => {
     let movie: IMovie | null = null;
 
     await axios
-        .get('http://localhost:3001/movie', {
+        .get("http://localhost:3001/movie", {
             params: {
                 id: id,
             },
@@ -237,4 +237,133 @@ export const getMovieDetails = async (id: number): Promise<IMovie | null> => {
         });
 
     return movie;
+};
+
+export interface IAuthorDetails {
+    name: string;
+    username: string;
+    avatar_path: string;
+    rating: number;
+}
+
+export interface IReview {
+    author: string;
+    author_details: IAuthorDetails;
+    content: string;
+    created_at: Date;
+    id: string;
+    updated_at: Date;
+    url: string;
+}
+
+export const getMovieReviews = async (
+    movieId: number,
+    language: string
+): Promise<IReview[] | null> => {
+    let reviews: IReview[] | null = null;
+
+    await axios
+        .get("http://localhost:3001/reviews", {
+            params: {
+                movieId: movieId,
+                language: language,
+            },
+        })
+        .then(({ data }: any) => {
+            if (data) {
+                if (data.length > 0) {
+                    reviews = data;
+
+                    if (reviews) {
+                        // As reviews vem da mais antiga para a mais recente,
+                        // dai tem que inverter o array pra ficar as mais
+                        // recentes no começo
+                        reviews.reverse();
+                    }
+                }
+            }
+        })
+        .catch((error: any) => {
+            console.log(error);
+        });
+
+    return reviews;
+};
+
+export interface ICastMember {
+    adult: boolean;
+    gender: number;
+    id: number;
+    known_for_department: string;
+    name: string;
+    original_name: string;
+    popularity: number;
+    profile_path: string;
+    cast_id: number;
+    character: string;
+    credit_id: string;
+    order: number;
+}
+
+export const getCastMembers = async (
+    movieId: number
+): Promise<ICastMember[] | null> => {
+    let castMembers: ICastMember[] | null = null;
+
+    await axios
+        .get("http://localhost:3001/movieCast", {
+            params: {
+                movieId: movieId,
+            },
+        })
+        .then(({ data }: any) => {
+            if (data) {
+                if (data.length > 0) {
+                    castMembers = data;
+                }
+            }
+        })
+        .catch((error: any) => {
+            console.log(error);
+        });
+
+    return castMembers;
+};
+
+interface IWatchProvider {
+    display_priority: number;
+    logo_path: string;
+    provider_id: number;
+    provider_name: string;
+}
+
+export interface IWatchProviders {
+    isAvailable: boolean;
+    link: string;
+    flatrate: IWatchProvider[];
+    rent: IWatchProvider[];
+    buy: IWatchProvider[];
+}
+
+export const getWatchProviders = async (
+    movieId: number
+): Promise<IWatchProviders | null> => {
+    let watchProviders: IWatchProviders | null = null;
+
+    await axios
+        .get("http://localhost:3001/watchProviders", {
+            params: {
+                movieId: movieId,
+            },
+        })
+        .then(({ data }: any) => {
+            if (data) {
+                watchProviders = data;
+            }
+        })
+        .catch((error: any) => {
+            console.log(error);
+        });
+
+    return watchProviders;
 };

@@ -11,10 +11,74 @@ body {
 
 .mask {
     width: auto;
+    height: auto;
 }
 
 .bg-image {
-    height: 95vh;
+    height: auto;
+}
+
+.darkBackground {
+    background-color: black;    
+}
+
+.accordion-header {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.accordion-button {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: rgba(57, 192, 237, 0.3);    
+    color: white;
+}
+
+.transparentBG {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.transparentBG.active {
+    background-color: rgba(57, 192, 237, 0.5);
+}
+
+.transparentBG:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.transparentBG.active:hover {
+    background-color: rgba(57, 192, 237, 0.8);
+}
+
+.btn-check:checked.btn-primary {
+    background-color: rgba(57, 192, 237, 0.8);
+}
+
+.btn-group span label {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.btn-group span label:hover {
+    background-color: rgba(0, 0, 0, 1);
+}
+
+.btn-check:checked+.btn-primary {
+    background-color: rgba(57, 192, 237, 0.5);
+}
+
+.fake-link {
+    color: white;
+    cursor: pointer;
+}
+
+div.card.text-center {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.bold {
+    font-weight: bold
 }
 
 /*fonte: https://css-tricks.com/perfect-full-page-background-image/*/

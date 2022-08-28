@@ -1,10 +1,19 @@
-import { MDBContainer, MDBNavbar, MDBNavbarBrand } from 'mdb-react-ui-kit';
+import "../styles/main.css";
+import {
+    MDBContainer,
+    MDBNavbar,
+    MDBNavbarBrand,
+    MDBIcon,
+} from "mdb-react-ui-kit";
 
 const CustomNavbar = () => {
     return (
-        <MDBNavbar className="sticky-top" dark bgColor="dark">
-            <MDBContainer className="justify-content-center">
-                <MDBNavbarBrand>Movie Finder do Gugão</MDBNavbarBrand>
+        <MDBNavbar className="sticky-top darkBackground dark">
+            <MDBContainer className="ms-2">
+                <MDBNavbarBrand className="text-white" href="/">
+                    <MDBIcon fas icon="film" className="me-2" />
+                    Movie Finder do Gugão
+                </MDBNavbarBrand>
             </MDBContainer>
         </MDBNavbar>
     );

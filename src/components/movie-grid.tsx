@@ -1,12 +1,12 @@
-import '../styles/main.css';
-import '../styles/movie-grid.css';
-import { MDBRow, MDBCol, MDBContainer, MDBSpinner } from 'mdb-react-ui-kit';
-import Movie from './movie-card';
-import { useTypedSelector } from '../hooks/useTypedSelector';
-import Alert from 'react-bootstrap/Alert';
-import { IFilter } from './content';
-import { useEffect } from 'react';
-import CustomPagination from './custom-pagination';
+import "../styles/main.css";
+import "../styles/movie-grid.css";
+import { MDBRow, MDBCol, MDBContainer, MDBSpinner } from "mdb-react-ui-kit";
+import Movie from "./movie-card";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import Alert from "react-bootstrap/Alert";
+import { IFilter } from "./content";
+import { useEffect } from "react";
+import CustomPagination from "./custom-pagination";
 
 interface IFiltro {
     filterState: IFilter;
@@ -42,30 +42,40 @@ const MovieGrid: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
             )}
             {!error && !loading && (
                 <MDBContainer fluid>
-                    <CustomPagination
-                        filterState={filterState}
-                        setFilterState={setFilterState}
-                    />
-                    <MDBRow className="col-12  g-3 m-0">
-                        {data.movie_details.map((movie) => (
-                            <MDBCol key={movie.id}>
-                                <Movie
-                                    name={movie.title}
-                                    imageSRC={movie.poster_path}
-                                    releaseDate={movie.release_date}
-                                    budget={movie.budget}
-                                    revenue={movie.revenue}
-                                    rating={movie.vote_average}
-                                    tagline={movie.tagline}
-                                    id={movie.id}
-                                />
-                            </MDBCol>
-                        ))}
-                    </MDBRow>
-                    <CustomPagination
-                        filterState={filterState}
-                        setFilterState={setFilterState}
-                    />
+                    {data.movie_details && data.movie_details.length > 0 && (
+                        <>
+                            <CustomPagination
+                                filterState={filterState}
+                                setFilterState={setFilterState}
+                            />
+                            <MDBRow className="col-12  g-3 m-0">
+                                {data.movie_details.map((movie) => (
+                                    <MDBCol key={movie.id}>
+                                        <Movie
+                                            name={movie.title}
+                                            imageSRC={movie.poster_path}
+                                            releaseDate={movie.release_date}
+                                            budget={movie.budget}
+                                            revenue={movie.revenue}
+                                            rating={movie.vote_average}
+                                            tagline={movie.tagline}
+                                            id={movie.id}
+                                        />
+                                    </MDBCol>
+                                ))}
+                            </MDBRow>
+                            <CustomPagination
+                                filterState={filterState}
+                                setFilterState={setFilterState}
+                            />
+                        </>
+                    )}
+                    {(!data.movie_details ||
+                        data.movie_details.length === 0) && (
+                        <div className="centralizar text-white">
+                            <p>Nenhum filme encontrado</p>
+                        </div>
+                    )}
                 </MDBContainer>
             )}
         </div>
