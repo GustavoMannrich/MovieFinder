@@ -1,5 +1,6 @@
 .movieCard {
     min-width: 450px;
+    min-height: 366px;
 }
 
 .movieCard:hover {

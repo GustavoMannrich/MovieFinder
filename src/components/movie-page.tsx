@@ -1,4 +1,4 @@
-import "../styles/main.css";
+import '../styles/main.css';
 import {
     MDBContainer,
     MDBRow,
@@ -15,9 +15,10 @@ import {
     MDBCardText,
     MDBCollapse,
     MDBTooltip,
-} from "mdb-react-ui-kit";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+    MDBSpinner,
+} from 'mdb-react-ui-kit';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import {
     IMovie,
     getMovieDetails,
@@ -27,10 +28,10 @@ import {
     getCastMembers,
     IWatchProviders,
     getWatchProviders,
-} from "../scripts/requests";
+} from '../scripts/requests';
 
 const MoviePage = () => {
-    const [movie, setMovie] = useState<IMovie | null>(null);
+    const [movie, setMovie] = useState<IMovie | null | undefined>(null);
     const [reviews, setReviews] = useState<IReview[] | null>(null);
     const [castMembers, setCastMembers] = useState<ICastMember[] | null>(null);
     const [watchProviders, setWatchProviders] =
@@ -41,11 +42,11 @@ const MoviePage = () => {
     const toggleShow = () => setShowShow(!showShow);
 
     const isNumber = (str: string): boolean => {
-        if (typeof str !== "string") {
+        if (typeof str !== 'string') {
             return false;
         }
 
-        if (str.trim() === "") {
+        if (str.trim() === '') {
             return false;
         }
 
@@ -73,7 +74,7 @@ const MoviePage = () => {
             };
 
             fetchMovieDetails();
-            fetchReviews("pt-BR");
+            fetchReviews('pt-BR');
             fetchMovieCast();
             fetchWatchProviders();
         }
@@ -89,7 +90,7 @@ const MoviePage = () => {
     };
 
     const padTo2Digits = (num: number) => {
-        return num.toString().padStart(2, "0");
+        return num.toString().padStart(2, '0');
     };
 
     const formatDate = (date: Date) => {
@@ -99,14 +100,14 @@ const MoviePage = () => {
             padTo2Digits(d.getDate()),
             padTo2Digits(d.getMonth() + 1),
             d.getFullYear(),
-        ].join("/");
+        ].join('/');
     };
 
     const formatDateStr = (date: string) => {
         let datePart: RegExpMatchArray | null = date.match(/\d+/g);
-        let year = "";
-        let month = "";
-        let day = "";
+        let year = '';
+        let month = '';
+        let day = '';
 
         if (datePart) {
             year = datePart[0];
@@ -114,13 +115,13 @@ const MoviePage = () => {
             day = datePart[2];
         }
 
-        return day + "/" + month + "/" + year;
+        return day + '/' + month + '/' + year;
     };
 
     const priceSplitter = (number: number) =>
-        number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-    let languageNames = new Intl.DisplayNames(["pt-BR"], { type: "language" });
+    let languageNames = new Intl.DisplayNames(['pt-BR'], { type: 'language' });
 
     const convertMinutes = (totalMinutes: number): string => {
         const hours = Math.floor(totalMinutes / 60);
@@ -142,13 +143,16 @@ const MoviePage = () => {
                             className="fullscreenImage"
                             src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
                             alt="plano de fundo"
+                            style={{
+                                filter: 'brightness(0.2)',
+                            }}
                         />
                     )}
                 </div>
                 <div
-                    className="content"
+                    className="content moviepage"
                     style={{
-                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                        /*backgroundColor: 'rgba(0, 0, 0, 0.75)',*/
                         zIndex: 10,
                     }}
                 >
@@ -161,13 +165,13 @@ const MoviePage = () => {
                                             {movie.poster_path && (
                                                 <img
                                                     src={
-                                                        "https://image.tmdb.org/t/p/w500" +
+                                                        'https://image.tmdb.org/t/p/w500' +
                                                         movie.poster_path
                                                     }
                                                     className="img-fluid rounded shadow-4 m-3"
                                                     alt={`Poster de ${movie.title}`}
                                                     style={{
-                                                        maxHeight: "275px",
+                                                        maxHeight: '275px',
                                                     }}
                                                 />
                                             )}
@@ -177,7 +181,7 @@ const MoviePage = () => {
                                                     className="img-fluid rounded shadow-4 m-3"
                                                     alt="Poster não encontrado"
                                                     style={{
-                                                        maxHeight: "275px",
+                                                        maxHeight: '275px',
                                                     }}
                                                 />
                                             )}
@@ -189,7 +193,7 @@ const MoviePage = () => {
                                             {movie.tagline && (
                                                 <h4
                                                     style={{
-                                                        fontStyle: "italic",
+                                                        fontStyle: 'italic',
                                                     }}
                                                 >
                                                     "{movie.tagline}"
@@ -267,7 +271,7 @@ const MoviePage = () => {
                                                             className="text-info bold"
                                                             style={{
                                                                 textTransform:
-                                                                    "capitalize",
+                                                                    'capitalize',
                                                             }}
                                                         >
                                                             {languageNames.of(
@@ -283,7 +287,7 @@ const MoviePage = () => {
                                                     <span className="text-white me-2">
                                                         Orçamento:
                                                     </span>
-                                                    <span className="text-success bold">
+                                                    <span className="text-info bold">
                                                         <MDBIcon
                                                             fas
                                                             icon="dollar-sign"
@@ -294,7 +298,7 @@ const MoviePage = () => {
                                                                 movie.budget
                                                             )}
                                                         {movie.budget <= 0 &&
-                                                            "-"}
+                                                            '-'}
                                                     </span>
                                                 </MDBCol>
                                                 <MDBCol
@@ -304,7 +308,7 @@ const MoviePage = () => {
                                                     <span className="text-white me-2">
                                                         Receita:
                                                     </span>
-                                                    <span className="text-success bold">
+                                                    <span className="text-info bold">
                                                         <MDBIcon
                                                             fas
                                                             icon="dollar-sign"
@@ -315,7 +319,7 @@ const MoviePage = () => {
                                                                 movie.revenue
                                                             )}
                                                         {movie.revenue <= 0 &&
-                                                            "-"}
+                                                            '-'}
                                                     </span>
                                                 </MDBCol>
                                             </MDBRow>
@@ -352,7 +356,9 @@ const MoviePage = () => {
                                                     sm="auto mb-2"
                                                     className="ps-0"
                                                 >
-                                                    <span>by JustWatch</span>
+                                                    <span className="text-info">
+                                                        by JustWatch
+                                                    </span>
                                                 </MDBCol>
                                             </div>
                                         </MDBRow>
@@ -376,11 +382,15 @@ const MoviePage = () => {
                                                                             key={
                                                                                 index
                                                                             }
-                                                                            tag="span"
-                                                                            placement="right"
+                                                                            tag="div"
+                                                                            placement="top"
                                                                             wrapperProps={{
                                                                                 className:
-                                                                                    "fake-link",
+                                                                                    'fake-link',
+                                                                                style: {
+                                                                                    display:
+                                                                                        'inline',
+                                                                                },
                                                                             }}
                                                                             title={
                                                                                 w.provider_name
@@ -394,9 +404,9 @@ const MoviePage = () => {
                                                                                 }
                                                                                 style={{
                                                                                     maxWidth:
-                                                                                        "50px",
+                                                                                        '50px',
                                                                                     borderRadius:
-                                                                                        "12px",
+                                                                                        '12px',
                                                                                 }}
                                                                             ></img>
                                                                         </MDBTooltip>
@@ -421,11 +431,17 @@ const MoviePage = () => {
                                                                             key={
                                                                                 index
                                                                             }
-                                                                            tag="span"
-                                                                            placement="right"
+                                                                            tag="div"
+                                                                            placement="top"
                                                                             wrapperProps={{
                                                                                 className:
-                                                                                    "fake-link",
+                                                                                    'fake-link',
+                                                                                style: {
+                                                                                    display:
+                                                                                        'inline',
+                                                                                    marginTop:
+                                                                                        '50px',
+                                                                                },
                                                                             }}
                                                                             title={
                                                                                 w.provider_name
@@ -439,9 +455,9 @@ const MoviePage = () => {
                                                                                 }
                                                                                 style={{
                                                                                     maxWidth:
-                                                                                        "50px",
+                                                                                        '50px',
                                                                                     borderRadius:
-                                                                                        "12px",
+                                                                                        '12px',
                                                                                 }}
                                                                             ></img>
                                                                         </MDBTooltip>
@@ -466,11 +482,15 @@ const MoviePage = () => {
                                                                             key={
                                                                                 index
                                                                             }
-                                                                            tag="span"
-                                                                            placement="right"
+                                                                            tag="div"
+                                                                            placement="top"
                                                                             wrapperProps={{
                                                                                 className:
-                                                                                    "fake-link",
+                                                                                    'fake-link',
+                                                                                style: {
+                                                                                    display:
+                                                                                        'inline',
+                                                                                },
                                                                             }}
                                                                             title={
                                                                                 w.provider_name
@@ -484,9 +504,9 @@ const MoviePage = () => {
                                                                                 }
                                                                                 style={{
                                                                                     maxWidth:
-                                                                                        "50px",
+                                                                                        '50px',
                                                                                     borderRadius:
-                                                                                        "12px",
+                                                                                        '12px',
                                                                                 }}
                                                                             ></img>
                                                                         </MDBTooltip>
@@ -551,15 +571,6 @@ const MoviePage = () => {
 
                                         {castMembers.length > 6 && (
                                             <>
-                                                <span
-                                                    className="fake-link"
-                                                    onClick={toggleShow}
-                                                >
-                                                    {showShow &&
-                                                        "Mostrar menos"}
-                                                    {!showShow &&
-                                                        "Mostrar mais"}
-                                                </span>
                                                 <MDBCollapse show={showShow}>
                                                     <MDBRow className="ms-0 me-0">
                                                         {castMembers &&
@@ -606,13 +617,38 @@ const MoviePage = () => {
                                                             )}
                                                     </MDBRow>
                                                 </MDBCollapse>
+                                                <span
+                                                    className="fake-link"
+                                                    onClick={toggleShow}
+                                                >
+                                                    {showShow && (
+                                                        <span>
+                                                            Mostrar menos
+                                                            <MDBIcon
+                                                                fas
+                                                                icon="chevron-up"
+                                                                className="ms-2"
+                                                            />
+                                                        </span>
+                                                    )}
+                                                    {!showShow && (
+                                                        <span>
+                                                            Mostrar mais
+                                                            <MDBIcon
+                                                                fas
+                                                                icon="chevron-down"
+                                                                className="ms-2"
+                                                            />
+                                                        </span>
+                                                    )}
+                                                </span>
                                             </>
                                         )}
                                     </MDBContainer>
                                 )}
                                 <MDBContainer
                                     className="mt-4"
-                                    style={{ height: "auto" }}
+                                    style={{ height: 'auto' }}
                                 >
                                     <h2 className="text-info">Reviews</h2>
                                     <MDBBtnGroup className="mb-3">
@@ -622,7 +658,7 @@ const MoviePage = () => {
                                             className=""
                                             wrapperClass="me-2 transparentBG"
                                             onClick={() =>
-                                                languageClick("pt-BR")
+                                                languageClick('pt-BR')
                                             }
                                             btn
                                             wrapperTag="span"
@@ -633,7 +669,7 @@ const MoviePage = () => {
                                             id="enButton"
                                             name="language"
                                             onClick={() =>
-                                                languageClick("en-US")
+                                                languageClick('en-US')
                                             }
                                             wrapperTag="span"
                                             btn
@@ -676,7 +712,7 @@ const MoviePage = () => {
                                                         }
                                                         style={{
                                                             backgroundColor:
-                                                                "rgba(0, 0, 0, 0.5)",
+                                                                'rgba(0, 0, 0, 0.5)',
                                                         }}
                                                     >
                                                         {r.content}
@@ -692,6 +728,20 @@ const MoviePage = () => {
                             </div>
                         )}
                     </div>
+                    {movie === null && (
+                        <div className="centralizar text-white mt-5 pt-5">
+                            <MDBSpinner role="status" color="white">
+                                <span className="visually-hidden">
+                                    Carregando...
+                                </span>
+                            </MDBSpinner>
+                        </div>
+                    )}
+                    {movie === undefined && (
+                        <h3 className="centralizar text-white mt-5 pt-5">
+                            404 - Filme não encontrado
+                        </h3>
+                    )}
                 </div>
             </div>
         </>

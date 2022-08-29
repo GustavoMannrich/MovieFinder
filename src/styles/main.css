@@ -1,5 +1,5 @@
 body {
-    background-color: rgb(87, 87, 87);
+    background-color: rgb(5, 5, 5); /*rgb(87, 87, 87);*/
     font-family: Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -19,7 +19,7 @@ body {
 }
 
 .darkBackground {
-    background-color: black;    
+    background-color: black;
 }
 
 .accordion-header {
@@ -32,8 +32,12 @@ body {
 }
 
 .accordion-button:not(.collapsed) {
-    background-color: rgba(57, 192, 237, 0.3);    
+    background-color: rgba(57, 192, 237, 0.3);
     color: white;
+}
+
+.transparentBG-noHover {
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .transparentBG {
@@ -64,7 +68,7 @@ body {
     background-color: rgba(0, 0, 0, 1);
 }
 
-.btn-check:checked+.btn-primary {
+.btn-check:checked + .btn-primary {
     background-color: rgba(57, 192, 237, 0.5);
 }
 
@@ -78,7 +82,15 @@ div.card.text-center {
 }
 
 .bold {
-    font-weight: bold
+    font-weight: bold;
+}
+
+.tooltip.bs-tooltip-top div {
+    margin-bottom: 12px;
+}
+
+.tooltip div {
+    background-color: black;
 }
 
 /*fonte: https://css-tricks.com/perfect-full-page-background-image/*/
@@ -100,7 +112,7 @@ div.card.text-center {
 @media screen and (max-width: 1024px) {
     /* Specific to this particular image */
     .fullscreenImage {
-        left: 50%;
-        margin-left: -512px; /* 50% */
+        left: 75%;
+        margin-left: -768px; /*-512px; /* 50% */
     }
 }

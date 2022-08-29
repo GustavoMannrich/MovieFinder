@@ -21,7 +21,7 @@ import {
     getPeopleByKeyword,
 } from '../scripts/requests';
 import { useActions } from '../hooks/useActions';
-import { IFilter } from './content';
+import { IFilter } from '../scripts/requests';
 import Select, { MultiValue, SingleValue } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import DatePicker from 'react-datepicker';
@@ -63,25 +63,28 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
     }, []);
 
     const buscarClick = async () => {
-        searchMovies(
-            genero,
-            adulto,
-            1,
-            sort,
-            pessoa,
-            dataInicial,
-            dataFinal,
-            voteCount
-        );
-
-        setFilterState({
+        searchMovies({
             genero: genero,
             adulto: adulto,
+            page: 1,
             sort: sort,
             pessoa: pessoa,
             dataInicial: dataInicial,
             dataFinal: dataFinal,
             voteCount: voteCount,
+            tipoBusca: '',
+        });
+
+        setFilterState({
+            genero: genero,
+            adulto: adulto,
+            page: 1,
+            sort: sort,
+            pessoa: pessoa,
+            dataInicial: dataInicial,
+            dataFinal: dataFinal,
+            voteCount: voteCount,
+            tipoBusca: 'Busca personalizada',
         });
     };
 
@@ -223,7 +226,7 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
 
     return (
         <div>
-            <MDBCard className="p-1 m-3 filterCard" background="dark">
+            <MDBCard className="p-1 m-3 filterCard transparentBG-noHover">
                 <MDBCardBody>
                     <MDBRow>
                         <MDBCol>
@@ -271,10 +274,61 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                             }
                             color="white"
                         >
+                            <MDBIcon
+                                fas
+                                icon={
+                                    showAdvancedSearch
+                                        ? 'chevron-up'
+                                        : 'chevron-down'
+                                }
+                                className="me-2"
+                            />
                             Pesquisa avançada
+                            <MDBIcon
+                                fas
+                                icon={
+                                    showAdvancedSearch
+                                        ? 'chevron-up'
+                                        : 'chevron-down'
+                                }
+                                className="ms-2"
+                            />
                         </MDBBtn>
                     </div>
                     <MDBCollapse show={showAdvancedSearch}>
+                        <MDBRow>
+                            <MDBCol>
+                                <Select
+                                    onChange={(value) => onSortChange(value)}
+                                    placeholder={'Ordenação'}
+                                    className="mt-1 mb-1"
+                                    noOptionsMessage={() => 'Nada encontrado'}
+                                    defaultValue={[sortOptions[4]]}
+                                    options={sortOptions}
+                                    styles={{
+                                        container: (base) => ({
+                                            ...base,
+                                            zIndex: 10,
+                                        }),
+                                    }}
+                                />
+                            </MDBCol>
+                            <MDBCol md="auto" center>
+                                <MDBTooltip
+                                    tag="a"
+                                    placement="left"
+                                    wrapperProps={{ href: '#' }}
+                                    title="Ordenação dos filmes"
+                                >
+                                    <MDBIcon
+                                        color="white"
+                                        fas
+                                        icon="info-circle"
+                                        className="m-0"
+                                    />
+                                </MDBTooltip>
+                            </MDBCol>
+                        </MDBRow>
                         <MDBRow>
                             <MDBCol>
                                 <Select
@@ -289,39 +343,6 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                                     styles={{
                                         container: (base) => ({
                                             ...base,
-                                            zIndex: 10,
-                                        }),
-                                    }}
-                                />
-                            </MDBCol>
-                            <MDBCol md="auto" center>
-                                <MDBTooltip
-                                    tag="a"
-                                    placement="left"
-                                    wrapperProps={{ href: '#' }}
-                                    title="Serão retornados apenas os filmes que possuem todos os gêneros selecionados"
-                                >
-                                    <MDBIcon
-                                        color="white"
-                                        fas
-                                        icon="info-circle"
-                                        className="m-0"
-                                    />
-                                </MDBTooltip>
-                            </MDBCol>
-                        </MDBRow>
-                        <MDBRow>
-                            <MDBCol>
-                                <Select
-                                    onChange={(value) => onSortChange(value)}
-                                    placeholder={'Ordenação'}
-                                    className="mt-1 mb-1"
-                                    noOptionsMessage={() => 'Nada encontrado'}
-                                    defaultValue={[sortOptions[4]]}
-                                    options={sortOptions}
-                                    styles={{
-                                        container: (base) => ({
-                                            ...base,
                                             zIndex: 9,
                                         }),
                                     }}
@@ -332,7 +353,7 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                                     tag="a"
                                     placement="left"
                                     wrapperProps={{ href: '#' }}
-                                    title="Ordenação dos filmes"
+                                    title="Serão retornados apenas os filmes que possuem todos os gêneros selecionados"
                                 >
                                     <MDBIcon
                                         color="white"
@@ -520,13 +541,13 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                     <div className="centralizar mt-3">
                         <MDBBtn
                             type="submit"
-                            color="success"
-                            className="me-3"
+                            color="info"
+                            className="me-3 transparentBG active"
                             onClick={buscarClick}
                         >
                             Buscar
                         </MDBBtn>
-                        <MDBTooltip
+                        {/*<MDBTooltip
                             tag="a"
                             placement="top"
                             wrapperProps={{ href: '#' }}
@@ -535,7 +556,7 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                             <MDBBtn type="submit" color="light">
                                 Estou com sorte
                             </MDBBtn>
-                        </MDBTooltip>
+                        </MDBTooltip>*/}
                     </div>
                 </MDBCardBody>
             </MDBCard>

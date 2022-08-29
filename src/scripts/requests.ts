@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require('axios');
 
 interface IItem {
     id: number;
@@ -11,7 +11,7 @@ export const getGeneros = async (): Promise<IItems> => {
     const generos: IItems = [];
 
     await axios
-        .get("http://localhost:3001/generos")
+        .get('http://localhost:3001/generos')
         .then((response: any) => {
             response.data.genres.forEach((g: IItem) => {
                 generos.push(g);
@@ -35,6 +35,18 @@ export const getGeneros = async (): Promise<IItems> => {
 
     return generos;
 };
+
+export interface IFilter {
+    genero: string;
+    adulto: boolean;
+    page: number;
+    sort: string;
+    pessoa: string;
+    dataInicial: Date | null;
+    dataFinal: Date | null;
+    voteCount: number;
+    tipoBusca: string;
+}
 
 interface IMovieDetails {
     poster_path: string;
@@ -78,7 +90,7 @@ export const getMovies = async (
     };
 
     await axios
-        .get("http://localhost:3001/descobrir", {
+        .get('http://localhost:3001/descobrir', {
             params: {
                 genero: genero,
                 adult: adult,
@@ -116,7 +128,7 @@ export const getMoviesByKeyword = async (keyword: string) => {
     }
 
     await axios
-        .get("http://localhost:3001/moviesByKeyword", {
+        .get('http://localhost:3001/moviesByKeyword', {
             params: {
                 keyword: keyword,
             },
@@ -145,7 +157,7 @@ export const getPeopleByKeyword = async (keyword: string) => {
     }
 
     await axios
-        .get("http://localhost:3001/peopleByKeyword", {
+        .get('http://localhost:3001/peopleByKeyword', {
             params: {
                 keyword: keyword,
             },
@@ -216,11 +228,13 @@ export interface IMovie {
     vote_count: number;
 }
 
-export const getMovieDetails = async (id: number): Promise<IMovie | null> => {
-    let movie: IMovie | null = null;
+export const getMovieDetails = async (
+    id: number
+): Promise<IMovie | undefined> => {
+    let movie: IMovie | undefined = undefined;
 
     await axios
-        .get("http://localhost:3001/movie", {
+        .get('http://localhost:3001/movie', {
             params: {
                 id: id,
             },
@@ -263,7 +277,7 @@ export const getMovieReviews = async (
     let reviews: IReview[] | null = null;
 
     await axios
-        .get("http://localhost:3001/reviews", {
+        .get('http://localhost:3001/reviews', {
             params: {
                 movieId: movieId,
                 language: language,
@@ -311,7 +325,7 @@ export const getCastMembers = async (
     let castMembers: ICastMember[] | null = null;
 
     await axios
-        .get("http://localhost:3001/movieCast", {
+        .get('http://localhost:3001/movieCast', {
             params: {
                 movieId: movieId,
             },
@@ -351,7 +365,7 @@ export const getWatchProviders = async (
     let watchProviders: IWatchProviders | null = null;
 
     await axios
-        .get("http://localhost:3001/watchProviders", {
+        .get('http://localhost:3001/watchProviders', {
             params: {
                 movieId: movieId,
             },
@@ -366,4 +380,32 @@ export const getWatchProviders = async (
         });
 
     return watchProviders;
+};
+
+export const getMoviesTrending = async (): Promise<IMovies> => {
+    const movies: IMovies = {
+        movie_details: [],
+        page: 0,
+        total_pages: 0,
+        total_results: 0,
+    };
+
+    await axios
+        .get('http://localhost:3001/trending')
+        .then((response: any) => {
+            if (response.data) {
+                response.data.movies.forEach((m: IMovieDetails) => {
+                    movies.movie_details.push(m);
+                });
+
+                movies.page = response.data.page;
+                movies.total_pages = response.data.total_pages;
+                movies.total_results = response.data.total_results;
+            }
+        })
+        .catch((error: any) => {
+            console.log(error);
+        });
+
+    return movies;
 };

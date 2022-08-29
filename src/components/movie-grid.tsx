@@ -1,12 +1,12 @@
-import "../styles/main.css";
-import "../styles/movie-grid.css";
-import { MDBRow, MDBCol, MDBContainer, MDBSpinner } from "mdb-react-ui-kit";
-import Movie from "./movie-card";
-import { useTypedSelector } from "../hooks/useTypedSelector";
-import Alert from "react-bootstrap/Alert";
-import { IFilter } from "./content";
-import { useEffect } from "react";
-import CustomPagination from "./custom-pagination";
+import '../styles/main.css';
+import '../styles/movie-grid.css';
+import { MDBRow, MDBCol, MDBContainer, MDBSpinner } from 'mdb-react-ui-kit';
+import Movie from './movie-card';
+import { useTypedSelector } from '../hooks/useTypedSelector';
+import Alert from 'react-bootstrap/Alert';
+import { IFilter } from '../scripts/requests';
+import { useEffect } from 'react';
+import CustomPagination from './custom-pagination';
 
 interface IFiltro {
     filterState: IFilter;
@@ -27,6 +27,8 @@ const MovieGrid: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
             dataInicial: filterState.dataInicial,
             dataFinal: filterState.dataFinal,
             voteCount: filterState.voteCount,
+            tipoBusca: filterState.tipoBusca,
+            page: filterState.page,
         });
     }, [data]);
 
@@ -35,8 +37,8 @@ const MovieGrid: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
             {error && <Alert variant="danger">{error}</Alert>}
             {loading && (
                 <div className="centralizar">
-                    <MDBSpinner role="status" color="dark">
-                        <span className="visually-hidden">Loading...</span>
+                    <MDBSpinner role="status" color="white">
+                        <span className="visually-hidden">Carregando...</span>
                     </MDBSpinner>
                 </div>
             )}
@@ -44,10 +46,13 @@ const MovieGrid: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                 <MDBContainer fluid>
                     {data.movie_details && data.movie_details.length > 0 && (
                         <>
-                            <CustomPagination
-                                filterState={filterState}
-                                setFilterState={setFilterState}
-                            />
+                            {filterState.tipoBusca ===
+                                'Busca personalizada' && (
+                                <CustomPagination
+                                    filterState={filterState}
+                                    setFilterState={setFilterState}
+                                />
+                            )}
                             <MDBRow className="col-12  g-3 m-0">
                                 {data.movie_details.map((movie) => (
                                     <MDBCol key={movie.id}>
@@ -64,18 +69,22 @@ const MovieGrid: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                                     </MDBCol>
                                 ))}
                             </MDBRow>
-                            <CustomPagination
-                                filterState={filterState}
-                                setFilterState={setFilterState}
-                            />
+                            {filterState.tipoBusca ===
+                                'Busca personalizada' && (
+                                <CustomPagination
+                                    filterState={filterState}
+                                    setFilterState={setFilterState}
+                                />
+                            )}
                         </>
                     )}
-                    {(!data.movie_details ||
-                        data.movie_details.length === 0) && (
-                        <div className="centralizar text-white">
-                            <p>Nenhum filme encontrado</p>
-                        </div>
-                    )}
+                    {data.movie_details &&
+                        data.movie_details.length === 0 &&
+                        filterState.tipoBusca && (
+                            <div className="centralizar text-white">
+                                <p>Nenhum filme encontrado</p>
+                            </div>
+                        )}
                 </MDBContainer>
             )}
         </div>

@@ -1,39 +1,40 @@
 import { Dispatch } from 'redux';
 import { ActionType } from '../action-types';
 import { Action } from '../actions';
-import { getMovies } from '../../scripts/requests';
+import { getMovies, getMoviesTrending } from '../../scripts/requests';
+import { IFilter } from '../../scripts/requests';
 
-export const searchMovies = (
-    genero: string,
-    adult: boolean,
-    page: number,
-    sort: string,
-    pessoa: string,
-    dataInicial: Date | null,
-    dataFinal: Date | null,
-    voteCount: number
-) => {
+export const searchMovies = (filtro: IFilter | null) => {
     return async (dispatch: Dispatch<Action>) => {
         dispatch({
             type: ActionType.SEARCH_MOVIES,
         });
 
         try {
-            const movies = await getMovies(
-                genero,
-                adult,
-                page,
-                sort,
-                pessoa,
-                dataInicial,
-                dataFinal,
-                voteCount
-            );
+            if (filtro) {
+                let movies = await getMovies(
+                    filtro.genero,
+                    filtro.adulto,
+                    filtro.page,
+                    filtro.sort,
+                    filtro.pessoa,
+                    filtro.dataInicial,
+                    filtro.dataFinal,
+                    filtro.voteCount
+                );
 
-            dispatch({
-                type: ActionType.SEARCH_MOVIES_SUCCESS,
-                payload: movies,
-            });
+                dispatch({
+                    type: ActionType.SEARCH_MOVIES_SUCCESS,
+                    payload: movies,
+                });
+            } else {
+                let movies = await getMoviesTrending();
+
+                dispatch({
+                    type: ActionType.SEARCH_MOVIES_SUCCESS,
+                    payload: movies,
+                });
+            }
         } catch (err: any) {
             dispatch({
                 type: ActionType.SEARCH_MOVIES_ERROR,

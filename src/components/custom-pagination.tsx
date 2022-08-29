@@ -5,7 +5,7 @@ import {
     MDBPaginationLink,
 } from 'mdb-react-ui-kit';
 import { useActions } from '../hooks/useActions';
-import { IFilter } from './content';
+import { IFilter } from '../scripts/requests';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 
 interface IFiltro {
@@ -26,16 +26,17 @@ const CustomPagination: React.FC<IFiltro> = ({
     };
 
     const setPage = (newPage: number) => {
-        searchMovies(
-            filterState.genero,
-            filterState.adulto,
-            newPage,
-            filterState.sort,
-            filterState.pessoa,
-            filterState.dataInicial,
-            filterState.dataFinal,
-            filterState.voteCount
-        );
+        searchMovies({
+            genero: filterState.genero,
+            adulto: filterState.adulto,
+            page: newPage,
+            sort: filterState.sort,
+            pessoa: filterState.pessoa,
+            dataInicial: filterState.dataInicial,
+            dataFinal: filterState.dataFinal,
+            voteCount: filterState.voteCount,
+            tipoBusca: '',
+        });
     };
 
     const getPageNumber = (index: number): number => {
