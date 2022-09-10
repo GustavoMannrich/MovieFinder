@@ -13,14 +13,15 @@ export const searchMovies = (filtro: IFilter | null) => {
         try {
             if (filtro) {
                 let movies = await getMovies(
+                    filtro.searchTerm,
                     filtro.genero,
-                    filtro.adulto,
                     filtro.page,
                     filtro.sort,
                     filtro.pessoa,
                     filtro.dataInicial,
                     filtro.dataFinal,
-                    filtro.voteCount
+                    filtro.voteCount,
+                    filtro.keyword
                 );
 
                 dispatch({

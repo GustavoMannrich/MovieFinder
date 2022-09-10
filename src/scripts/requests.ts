@@ -1,4 +1,4 @@
-const axios = require('axios');
+import { getFetch } from './util';
 
 interface IItem {
     id: number;
@@ -10,16 +10,13 @@ export interface IItems extends Array<IItem> {}
 export const getGeneros = async (): Promise<IItems> => {
     const generos: IItems = [];
 
-    await axios
-        .get('http://localhost:3001/generos')
-        .then((response: any) => {
-            response.data.genres.forEach((g: IItem) => {
+    await getFetch('http://localhost:3001/generos').then((data: any) => {
+        if (data) {
+            data.genres.forEach((g: IItem) => {
                 generos.push(g);
             });
-        })
-        .catch((error: any) => {
-            console.log(error);
-        });
+        }
+    });
 
     const customSort = (a: IItem, b: IItem) => {
         if (a.name < b.name) {
@@ -37,14 +34,15 @@ export const getGeneros = async (): Promise<IItems> => {
 };
 
 export interface IFilter {
+    searchTerm: string;
     genero: string;
-    adulto: boolean;
     page: number;
     sort: string;
     pessoa: string;
     dataInicial: Date | null;
     dataFinal: Date | null;
     voteCount: number;
+    keyword: string;
     tipoBusca: string;
 }
 
@@ -73,14 +71,15 @@ export interface IMovies {
 }
 
 export const getMovies = async (
-    genero: string,
-    adult: boolean,
+    searchTerm: string,
+    genero: string | null,
     page: number,
-    sort: string,
-    pessoa: string,
+    sort: string | null,
+    pessoa: string | null,
     dataInicial: Date | null,
     dataFinal: Date | null,
-    voteCount: number
+    voteCount: number | null,
+    keyword: string | null
 ): Promise<IMovies> => {
     const movies: IMovies = {
         movie_details: [],
@@ -89,18 +88,46 @@ export const getMovies = async (
         total_results: 0,
     };
 
-    await axios
-        .get('http://localhost:3001/descobrir', {
-            params: {
-                genero: genero,
-                adult: adult,
-                page: page,
-                sort: sort,
-                pessoa: pessoa,
-                dataInicial: dataInicial,
-                dataFinal: dataFinal,
-                voteCount: voteCount,
-            },
+    let url = '';
+    let params: any = {};
+
+    if (searchTerm) {
+        // Pesquisa por termo
+        url = 'http://localhost:3001/descobrirByKeyword';
+        params = {
+            keyword: searchTerm,
+            page: page,
+        };
+    } else {
+        // Pesquisa avançada
+        url = 'http://localhost:3001/descobrir';
+        params = {
+            genero: genero,
+            page: page,
+            sort: sort,
+            pessoa: pessoa,
+            dataInicial: dataInicial,
+            dataFinal: dataFinal,
+            voteCount: voteCount,
+            keyword: keyword,
+        };
+    }
+
+    await getFetch(url, params).then((data: any) => {
+        if (data) {
+            data.movies.forEach((m: IMovieDetails) => {
+                movies.movie_details.push(m);
+            });
+
+            movies.page = data.page;
+            movies.total_pages = data.total_pages;
+            movies.total_results = data.total_results;
+        }
+    });
+
+    /*await axios
+        .get(url, {
+            params: params,
         })
         .then((response: any) => {
             if (response.data) {
@@ -115,19 +142,30 @@ export const getMovies = async (
         })
         .catch((error: any) => {
             console.log(error);
-        });
+        });*/
 
+    console.log(movies);
     return movies;
 };
 
 export const getMoviesByKeyword = async (keyword: string) => {
-    var movies: { value: number; label: string }[] = [];
+    var movies: ISelectOption[] = [];
 
     if (keyword.length < 2) {
         return movies;
     }
 
-    await axios
+    await getFetch('http://localhost:3001/moviesByKeyword', {
+        keyword: keyword,
+    }).then((data: any) => {
+        if (data) {
+            data.forEach((movie: { id: number; title: string }) => {
+                movies.push({ value: movie.id, label: movie.title });
+            });
+        }
+    });
+
+    /*await axios
         .get('http://localhost:3001/moviesByKeyword', {
             params: {
                 keyword: keyword,
@@ -144,7 +182,7 @@ export const getMoviesByKeyword = async (keyword: string) => {
         })
         .catch((error: any) => {
             console.log(error);
-        });
+        });*/
 
     return movies;
 };
@@ -156,7 +194,17 @@ export const getPeopleByKeyword = async (keyword: string) => {
         return people;
     }
 
-    await axios
+    await getFetch('http://localhost:3001/peopleByKeyword', {
+        keyword: keyword,
+    }).then((data: any) => {
+        if (data) {
+            data.forEach((person: { id: number; name: string }) => {
+                people.push({ value: person.id, label: person.name });
+            });
+        }
+    });
+
+    /*await axios
         .get('http://localhost:3001/peopleByKeyword', {
             params: {
                 keyword: keyword,
@@ -173,7 +221,7 @@ export const getPeopleByKeyword = async (keyword: string) => {
         })
         .catch((error: any) => {
             console.log(error);
-        });
+        });*/
 
     return people;
 };
@@ -233,22 +281,15 @@ export const getMovieDetails = async (
 ): Promise<IMovie | undefined> => {
     let movie: IMovie | undefined = undefined;
 
-    await axios
-        .get('http://localhost:3001/movie', {
-            params: {
-                id: id,
-            },
-        })
-        .then(({ data }: any) => {
-            if (data) {
-                if (data.length > 0) {
-                    movie = data[0];
-                }
+    await getFetch('http://localhost:3001/movie', {
+        id: id,
+    }).then((data: any) => {
+        if (data) {
+            if (data.length > 0) {
+                movie = data[0];
             }
-        })
-        .catch((error: any) => {
-            console.log(error);
-        });
+        }
+    });
 
     return movie;
 };
@@ -276,30 +317,23 @@ export const getMovieReviews = async (
 ): Promise<IReview[] | null> => {
     let reviews: IReview[] | null = null;
 
-    await axios
-        .get('http://localhost:3001/reviews', {
-            params: {
-                movieId: movieId,
-                language: language,
-            },
-        })
-        .then(({ data }: any) => {
-            if (data) {
-                if (data.length > 0) {
-                    reviews = data;
+    await getFetch('http://localhost:3001/reviews', {
+        movieId: movieId,
+        language: language,
+    }).then((data: any) => {
+        if (data) {
+            if (data.length > 0) {
+                reviews = data;
 
-                    if (reviews) {
-                        // As reviews vem da mais antiga para a mais recente,
-                        // dai tem que inverter o array pra ficar as mais
-                        // recentes no começo
-                        reviews.reverse();
-                    }
+                if (reviews) {
+                    // As reviews vem da mais antiga para a mais recente,
+                    // dai tem que inverter o array pra ficar as mais
+                    // recentes no começo
+                    reviews.reverse();
                 }
             }
-        })
-        .catch((error: any) => {
-            console.log(error);
-        });
+        }
+    });
 
     return reviews;
 };
@@ -319,27 +353,27 @@ export interface ICastMember {
     order: number;
 }
 
+export interface ICastMembers {
+    cast: ICastMember[] | null;
+    directors: string;
+}
+
 export const getCastMembers = async (
     movieId: number
-): Promise<ICastMember[] | null> => {
-    let castMembers: ICastMember[] | null = null;
+): Promise<ICastMembers | null> => {
+    let castMembers: ICastMembers = { cast: null, directors: '' };
 
-    await axios
-        .get('http://localhost:3001/movieCast', {
-            params: {
-                movieId: movieId,
-            },
-        })
-        .then(({ data }: any) => {
-            if (data) {
-                if (data.length > 0) {
-                    castMembers = data;
-                }
+    await getFetch('http://localhost:3001/movieCast', {
+        movieId: movieId,
+    }).then((data: any) => {
+        if (data) {
+            if (data.castMembers?.length > 0) {
+                castMembers.cast = data.castMembers;
             }
-        })
-        .catch((error: any) => {
-            console.log(error);
-        });
+
+            castMembers.directors = data.directors;
+        }
+    });
 
     return castMembers;
 };
@@ -364,20 +398,13 @@ export const getWatchProviders = async (
 ): Promise<IWatchProviders | null> => {
     let watchProviders: IWatchProviders | null = null;
 
-    await axios
-        .get('http://localhost:3001/watchProviders', {
-            params: {
-                movieId: movieId,
-            },
-        })
-        .then(({ data }: any) => {
-            if (data) {
-                watchProviders = data;
-            }
-        })
-        .catch((error: any) => {
-            console.log(error);
-        });
+    await getFetch('http://localhost:3001/watchProviders', {
+        movieId: movieId,
+    }).then((data: any) => {
+        if (data) {
+            watchProviders = data;
+        }
+    });
 
     return watchProviders;
 };
@@ -390,22 +417,131 @@ export const getMoviesTrending = async (): Promise<IMovies> => {
         total_results: 0,
     };
 
-    await axios
-        .get('http://localhost:3001/trending')
-        .then((response: any) => {
-            if (response.data) {
-                response.data.movies.forEach((m: IMovieDetails) => {
-                    movies.movie_details.push(m);
-                });
+    await getFetch('http://localhost:3001/trending').then((data: any) => {
+        if (data) {
+            data.movies.forEach((m: IMovieDetails) => {
+                movies.movie_details.push(m);
+            });
 
-                movies.page = response.data.page;
-                movies.total_pages = response.data.total_pages;
-                movies.total_results = response.data.total_results;
-            }
-        })
-        .catch((error: any) => {
-            console.log(error);
-        });
+            movies.page = data.page;
+            movies.total_pages = data.total_pages;
+            movies.total_results = data.total_results;
+        }
+    });
 
     return movies;
+};
+
+export const getSimilarMovies = async (
+    movieId: number
+): Promise<IMovie[] | null> => {
+    let movies: IMovie[] | null = null;
+
+    await getFetch('http://localhost:3001/similarMovies', {
+        movieId: movieId,
+    }).then((data: any) => {
+        if (data && data.length > 0) {
+            movies = data;
+        }
+    });
+
+    return movies;
+};
+
+export interface IKeyword {
+    id: number;
+    name: string;
+}
+
+export const getMovieKeywords = async (
+    movieId: number
+): Promise<IKeyword[] | null> => {
+    let keywords: IKeyword[] | null = null;
+
+    await getFetch('http://localhost:3001/movieKeywords', {
+        movieId: movieId,
+    }).then((data: any) => {
+        if (data && data.length > 0) {
+            keywords = data;
+        }
+    });
+
+    return keywords;
+};
+
+export interface IPerson {
+    id: number;
+    name: string;
+}
+
+export interface ISelectOption {
+    value: number;
+    label: string;
+}
+
+export const getPeopleByID = async (
+    peopleIds: string
+): Promise<ISelectOption[]> => {
+    let people: ISelectOption[] = [];
+
+    await getFetch('http://localhost:3001/people', {
+        peopleIds: peopleIds,
+    }).then((data: any) => {
+        if (data && data.length > 0) {
+            data.forEach((p: IPerson) => {
+                people.push({ value: p.id, label: p.name });
+            });
+        }
+    });
+
+    return people;
+};
+
+export interface IVideo {
+    iso_639_1: string;
+    iso_3166_1: string;
+    name: string;
+    key: string;
+    site: string;
+    size: number;
+    type: string;
+    official: boolean;
+    published_at: Date;
+    id: string;
+}
+
+export interface IVideos {
+    trailers: IVideo[];
+    clips: IVideo[];
+    behindTheScenes: IVideo[];
+    featurettes: IVideo[];
+    teasers: IVideo[];
+    others: IVideo[];
+}
+
+export const getVideos = async (
+    movieId: number,
+    language: string
+): Promise<IVideos | null> => {
+    let videos: IVideos | null = null;
+
+    await getFetch('http://localhost:3001/videos', {
+        movieId: movieId,
+        language: language,
+    }).then((data: any) => {
+        if (data) {
+            if (
+                data.trailers?.length > 0 ||
+                data.clips?.length > 0 ||
+                data.behindTheScenes?.length > 0 ||
+                data.featurettes?.length > 0 ||
+                data.teasers?.length > 0 ||
+                data.others?.length > 0
+            ) {
+                videos = data;
+            }
+        }
+    });
+
+    return videos;
 };
