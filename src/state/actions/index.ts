@@ -1,5 +1,5 @@
-import { ActionType } from '../action-types';
-import { IMovies } from '../../scripts/requests';
+import { ActionType } from "../action-types";
+import { IMovies } from "../../utils/interfaces";
 
 interface SearchMoviesAction {
     type: ActionType.SEARCH_MOVIES;

@@ -1,8 +1,8 @@
-import '../../../styles/main.css';
-import { MDBContainer, MDBIcon, MDBCollapse } from 'mdb-react-ui-kit';
-import { ICastMembers } from '../../../scripts/requests';
-import { useState } from 'react';
-import CastRow from './cast-row';
+import "../../../styles/main.css";
+import { MDBContainer, MDBIcon, MDBCollapse } from "mdb-react-ui-kit";
+import { ICastMembers } from "../../../utils/interfaces";
+import { useState } from "react";
+import CastRow from "./cast-row";
 
 interface ICastMembersProps {
     castMembers: ICastMembers | null;

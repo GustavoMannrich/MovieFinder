@@ -1,6 +1,6 @@
-import '../../../styles/main.css';
-import { MDBAccordion, MDBAccordionItem } from 'mdb-react-ui-kit';
-import { IVideo } from '../../../scripts/requests';
+import "../../../styles/main.css";
+import { MDBAccordion, MDBAccordionItem } from "mdb-react-ui-kit";
+import { IVideo } from "../../../utils/interfaces";
 
 interface IVideoCategoryProps {
     category: string;
@@ -16,7 +16,7 @@ const VideoCategory = ({ category, videos }: IVideoCategoryProps) => {
                     <MDBAccordion
                         flush
                         style={{
-                            minWidth: '100%',
+                            minWidth: "100%",
                         }}
                     >
                         {videos.map((video, index) => (
@@ -25,7 +25,7 @@ const VideoCategory = ({ category, videos }: IVideoCategoryProps) => {
                                 collapseId={index + 1}
                                 headerTitle={video.name}
                                 style={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
                                 }}
                             >
                                 <div className="video-container">

@@ -1,4 +1,4 @@
-import '../../../styles/movie.css';
+import "../../../styles/movie.css";
 import {
     MDBCard,
     MDBCardTitle,
@@ -8,8 +8,9 @@ import {
     MDBRow,
     MDBCol,
     MDBIcon,
-} from 'mdb-react-ui-kit';
-import { Link } from 'react-router-dom';
+} from "mdb-react-ui-kit";
+import { Link } from "react-router-dom";
+import { formatDateStr, priceSplitter } from "../../../utils/helpers";
 
 interface MovieProps {
     name: string;
@@ -22,34 +23,15 @@ interface MovieProps {
     id: number;
 }
 
-const priceSplitter = (number: number) =>
-    number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
 const Movie: React.FC<MovieProps> = ({
     name,
     imageSRC,
     releaseDate,
-    budget,
     revenue,
     rating,
     tagline,
     id,
 }) => {
-    function formatDate(date: string) {
-        let datePart: RegExpMatchArray | null = date.match(/\d+/g);
-        let year = '';
-        let month = '';
-        let day = '';
-
-        if (datePart) {
-            year = datePart[0];
-            month = datePart[1];
-            day = datePart[2];
-        }
-
-        return day + '/' + month + '/' + year;
-    }
-
     return (
         <Link to={`/MovieFinder/movie/${id}`}>
             <MDBCard
@@ -61,7 +43,7 @@ const Movie: React.FC<MovieProps> = ({
                         {imageSRC && (
                             <MDBCardImage
                                 src={
-                                    'https://image.tmdb.org/t/p/w500' + imageSRC
+                                    "https://image.tmdb.org/t/p/w500" + imageSRC
                                 }
                                 alt="Poster do filme"
                                 className="m-2 cardImage rounded"
@@ -86,7 +68,7 @@ const Movie: React.FC<MovieProps> = ({
                             </div>
                             {tagline && (
                                 <MDBCardText>
-                                    <span style={{ fontStyle: 'italic' }}>
+                                    <span style={{ fontStyle: "italic" }}>
                                         "{tagline}"
                                     </span>
                                 </MDBCardText>
@@ -101,25 +83,9 @@ const Movie: React.FC<MovieProps> = ({
                                         icon="calendar-alt"
                                         className="me-2"
                                     />
-                                    {formatDate(releaseDate)}
+                                    {formatDateStr(releaseDate)}
                                 </MDBCol>
                             </MDBRow>
-                            {/*<MDBRow>
-                                <MDBCol className="text-success">
-                                    <small>
-                                        <span className="text-white me-2">
-                                            Orçamento:
-                                        </span>
-                                    </small>
-                                    <MDBIcon
-                                        fas
-                                        icon="dollar-sign"
-                                        className="me-2"
-                                    />
-                                    {budget > 0 && priceSplitter(budget)}
-                                    {budget <= 0 && '-'}
-                                </MDBCol>
-                                </MDBRow>*/}
                             <MDBRow>
                                 <MDBCol className="text-info">
                                     <small className="text-white me-2">
@@ -131,7 +97,7 @@ const Movie: React.FC<MovieProps> = ({
                                         className="me-2"
                                     />
                                     {revenue > 0 && priceSplitter(revenue)}
-                                    {revenue <= 0 && '-'}
+                                    {revenue <= 0 && "-"}
                                 </MDBCol>
                             </MDBRow>
                         </MDBCardBody>

@@ -1,7 +1,9 @@
-import '../../../styles/main.css';
-import { MDBContainer, MDBRow, MDBCol, MDBTooltip } from 'mdb-react-ui-kit';
-import { useEffect, useState } from 'react';
-import { IWatchProviders, getWatchProviders } from '../../../scripts/requests';
+import "../../../styles/main.css";
+import { MDBContainer, MDBRow, MDBCol } from "mdb-react-ui-kit";
+import { useEffect, useState } from "react";
+import { getWatchProviders } from "../../../scripts/requests";
+import { IWatchProviders } from "../../../utils/interfaces";
+import WatchProvider from "./watch-provider";
 
 interface IWatchProvidersProps {
     movieId: number;
@@ -39,134 +41,18 @@ const WatchProviders = ({ movieId }: IWatchProvidersProps) => {
                     <MDBRow>
                         {watchProviders.isAvailable && (
                             <>
-                                {watchProviders.flatrate.length > 0 && (
-                                    <MDBCol md="auto">
-                                        <h6 className="text-info mb-1">
-                                            Streaming
-                                        </h6>
-                                        <span>
-                                            {watchProviders.flatrate.map(
-                                                (w, index) => (
-                                                    <MDBTooltip
-                                                        key={index}
-                                                        tag="div"
-                                                        placement="top"
-                                                        wrapperProps={{
-                                                            className:
-                                                                'fake-link',
-                                                            style: {
-                                                                display:
-                                                                    'inline',
-                                                            },
-                                                        }}
-                                                        title={w.provider_name}
-                                                        className="spacing"
-                                                    >
-                                                        <img
-                                                            className="me-2"
-                                                            src={`https://image.tmdb.org/t/p/original${w.logo_path}`}
-                                                            alt={
-                                                                w.provider_name
-                                                            }
-                                                            style={{
-                                                                maxWidth:
-                                                                    '50px',
-                                                                borderRadius:
-                                                                    '12px',
-                                                            }}
-                                                        ></img>
-                                                    </MDBTooltip>
-                                                )
-                                            )}
-                                        </span>
-                                    </MDBCol>
-                                )}
-                                {watchProviders.buy.length > 0 && (
-                                    <MDBCol md="auto">
-                                        <h6 className="text-info mb-1">
-                                            Compra
-                                        </h6>
-                                        <span>
-                                            {watchProviders.buy.map(
-                                                (w, index) => (
-                                                    <MDBTooltip
-                                                        key={index}
-                                                        tag="div"
-                                                        placement="top"
-                                                        wrapperProps={{
-                                                            className:
-                                                                'fake-link',
-                                                            style: {
-                                                                display:
-                                                                    'inline',
-                                                                marginTop:
-                                                                    '50px',
-                                                            },
-                                                        }}
-                                                        title={w.provider_name}
-                                                        className="spacing"
-                                                    >
-                                                        <img
-                                                            className="me-2"
-                                                            src={`https://image.tmdb.org/t/p/original${w.logo_path}`}
-                                                            alt={
-                                                                w.provider_name
-                                                            }
-                                                            style={{
-                                                                maxWidth:
-                                                                    '50px',
-                                                                borderRadius:
-                                                                    '12px',
-                                                            }}
-                                                        ></img>
-                                                    </MDBTooltip>
-                                                )
-                                            )}
-                                        </span>
-                                    </MDBCol>
-                                )}
-                                {watchProviders.rent.length > 0 && (
-                                    <MDBCol md="auto">
-                                        <h6 className="text-info mb-1">
-                                            Aluguel
-                                        </h6>
-                                        <span>
-                                            {watchProviders.rent.map(
-                                                (w, index) => (
-                                                    <MDBTooltip
-                                                        key={index}
-                                                        tag="div"
-                                                        placement="top"
-                                                        wrapperProps={{
-                                                            className:
-                                                                'fake-link',
-                                                            style: {
-                                                                display:
-                                                                    'inline',
-                                                            },
-                                                        }}
-                                                        title={w.provider_name}
-                                                        className="spacing"
-                                                    >
-                                                        <img
-                                                            className="me-2"
-                                                            src={`https://image.tmdb.org/t/p/original${w.logo_path}`}
-                                                            alt={
-                                                                w.provider_name
-                                                            }
-                                                            style={{
-                                                                maxWidth:
-                                                                    '50px',
-                                                                borderRadius:
-                                                                    '12px',
-                                                            }}
-                                                        ></img>
-                                                    </MDBTooltip>
-                                                )
-                                            )}
-                                        </span>
-                                    </MDBCol>
-                                )}
+                                <WatchProvider
+                                    title="Streaming"
+                                    providers={watchProviders.flatrate}
+                                />
+                                <WatchProvider
+                                    title="Compra"
+                                    providers={watchProviders.buy}
+                                />
+                                <WatchProvider
+                                    title="Alguel"
+                                    providers={watchProviders.rent}
+                                />
                             </>
                         )}
                     </MDBRow>

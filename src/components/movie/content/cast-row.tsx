@@ -1,4 +1,4 @@
-import '../../../styles/main.css';
+import "../../../styles/main.css";
 import {
     MDBRow,
     MDBCol,
@@ -6,9 +6,9 @@ import {
     MDBCardImage,
     MDBCardBody,
     MDBCardText,
-} from 'mdb-react-ui-kit';
-import { ICastMember } from '../../../scripts/requests';
-import { Link } from 'react-router-dom';
+} from "mdb-react-ui-kit";
+import { ICastMember } from "../../../utils/interfaces";
+import { Link } from "react-router-dom";
 
 interface ICastRowProps {
     cast: ICastMember[] | null;

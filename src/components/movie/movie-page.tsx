@@ -1,37 +1,22 @@
-import '../../styles/main.css';
-import { MDBSpinner } from 'mdb-react-ui-kit';
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import {
-    IMovie,
-    getMovieDetails,
-    ICastMembers,
-    getCastMembers,
-} from '../../scripts/requests';
-import WatchProviders from './content/watch-providers';
-import CastMembers from './content/cast-members';
-import SimilarMovies from './content/similar-movies';
-import Videos from './content/videos';
-import Reviews from './content/reviews';
-import MovieKeywords from './content/movie-keywords';
-import MovieDetails from './content/movie-details';
+import "../../styles/main.css";
+import { MDBSpinner } from "mdb-react-ui-kit";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getMovieDetails, getCastMembers } from "../../scripts/requests";
+import { IMovie, ICastMembers } from "../../utils/interfaces";
+import WatchProviders from "./content/watch-providers";
+import CastMembers from "./content/cast-members";
+import SimilarMovies from "./content/similar-movies";
+import Videos from "./content/videos";
+import Reviews from "./content/reviews";
+import MovieKeywords from "./content/movie-keywords";
+import MovieDetails from "./content/movie-details";
+import { isNumber } from "../../utils/helpers";
 
 const MoviePage = () => {
     const [movie, setMovie] = useState<IMovie | null | undefined>(null);
     const [castMembers, setCastMembers] = useState<ICastMembers | null>(null);
     const { movieID } = useParams();
-
-    const isNumber = (str: string): boolean => {
-        if (typeof str !== 'string') {
-            return false;
-        }
-
-        if (str.trim() === '') {
-            return false;
-        }
-
-        return !Number.isNaN(Number(str));
-    };
 
     const getMovieId = (): number => {
         if (!movieID || !isNumber(movieID)) {
@@ -73,7 +58,7 @@ const MoviePage = () => {
                             src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
                             alt="plano de fundo"
                             style={{
-                                filter: 'brightness(0.2)',
+                                filter: "brightness(0.2)",
                             }}
                         />
                     )}

@@ -1,8 +1,9 @@
-import '../../../styles/main.css';
-import { MDBContainer, MDBBtn } from 'mdb-react-ui-kit';
-import { IKeyword, getMovieKeywords } from '../../../scripts/requests';
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import "../../../styles/main.css";
+import { MDBContainer, MDBBtn } from "mdb-react-ui-kit";
+import { getMovieKeywords } from "../../../scripts/requests";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { IKeyword } from "../../../utils/interfaces";
 
 interface IMovieKeywordsProps {
     movieId: number;
@@ -24,7 +25,7 @@ const MovieKeywords = ({ movieId }: IMovieKeywordsProps) => {
     return (
         <>
             {movieKeywords && (
-                <MDBContainer className="mt-4" style={{ height: 'auto' }}>
+                <MDBContainer className="mt-4" style={{ height: "auto" }}>
                     <h2 className="text-info">Palavras-chave</h2>
                     {movieKeywords.map((k, index) => (
                         <Link

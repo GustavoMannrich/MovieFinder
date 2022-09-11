@@ -1,14 +1,19 @@
-import '../../../styles/main.css';
+import "../../../styles/main.css";
 import {
     MDBContainer,
     MDBRow,
     MDBCol,
     MDBBtn,
     MDBIcon,
-    MDBTooltip,
-} from 'mdb-react-ui-kit';
-import { IMovie, ICastMembers } from '../../../scripts/requests';
-import { Link } from 'react-router-dom';
+} from "mdb-react-ui-kit";
+import { IMovie, ICastMembers } from "../../../utils/interfaces";
+import { Link } from "react-router-dom";
+import {
+    convertMinutes,
+    formatDateStr,
+    priceSplitter,
+} from "../../../utils/helpers";
+import Tooltip from "../../common/tooltip";
 
 interface IMovieDetailsProps {
     movie: IMovie;
@@ -16,36 +21,7 @@ interface IMovieDetailsProps {
 }
 
 const MovieDetails = ({ movie, castMembers }: IMovieDetailsProps) => {
-    const formatDateStr = (date: string) => {
-        let datePart: RegExpMatchArray | null = date.match(/\d+/g);
-        let year = '';
-        let month = '';
-        let day = '';
-
-        if (datePart) {
-            year = datePart[0];
-            month = datePart[1];
-            day = datePart[2];
-        }
-
-        return day + '/' + month + '/' + year;
-    };
-
-    const priceSplitter = (number: number) =>
-        number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-    let languageNames = new Intl.DisplayNames(['pt-BR'], { type: 'language' });
-
-    const convertMinutes = (totalMinutes: number): string => {
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
-
-        if (hours === 0) {
-            return `${minutes}m`;
-        }
-
-        return `${hours}h e ${minutes}m`;
-    };
+    let languageNames = new Intl.DisplayNames(["pt-BR"], { type: "language" });
 
     return (
         <>
@@ -55,13 +31,13 @@ const MovieDetails = ({ movie, castMembers }: IMovieDetailsProps) => {
                         {movie.poster_path && (
                             <img
                                 src={
-                                    'https://image.tmdb.org/t/p/w500' +
+                                    "https://image.tmdb.org/t/p/w500" +
                                     movie.poster_path
                                 }
                                 className="img-fluid rounded shadow-4 m-3"
                                 alt={`Poster de ${movie.title}`}
                                 style={{
-                                    maxHeight: '275px',
+                                    maxHeight: "275px",
                                 }}
                             />
                         )}
@@ -71,7 +47,7 @@ const MovieDetails = ({ movie, castMembers }: IMovieDetailsProps) => {
                                 className="img-fluid rounded shadow-4 m-3"
                                 alt="Poster não encontrado"
                                 style={{
-                                    maxHeight: '275px',
+                                    maxHeight: "275px",
                                 }}
                             />
                         )}
@@ -83,7 +59,7 @@ const MovieDetails = ({ movie, castMembers }: IMovieDetailsProps) => {
                         {movie.tagline && (
                             <h4
                                 style={{
-                                    fontStyle: 'italic',
+                                    fontStyle: "italic",
                                 }}
                             >
                                 "{movie.tagline}"
@@ -92,13 +68,10 @@ const MovieDetails = ({ movie, castMembers }: IMovieDetailsProps) => {
                         <p>{movie.overview}</p>
                         <MDBRow>
                             <MDBCol sm="auto" className="mb-1">
-                                <MDBTooltip
-                                    tag="div"
+                                <Tooltip
+                                    tip={`${movie.vote_count} avaliações`}
                                     placement="top"
-                                    wrapperProps={{
-                                        className: 'fake-link',
-                                    }}
-                                    title={`${movie.vote_count} avaliações`}
+                                    wrapperProps={{ className: "fake-link" }}
                                 >
                                     <span className="text-warning bold">
                                         <MDBIcon
@@ -108,7 +81,7 @@ const MovieDetails = ({ movie, castMembers }: IMovieDetailsProps) => {
                                         />
                                         {movie.vote_average.toFixed(1)}
                                     </span>
-                                </MDBTooltip>
+                                </Tooltip>
                             </MDBCol>
                             <MDBCol sm="auto" className="mb-1">
                                 <span className="text-info bold">
@@ -133,9 +106,9 @@ const MovieDetails = ({ movie, castMembers }: IMovieDetailsProps) => {
                             {castMembers && castMembers.directors && (
                                 <MDBCol sm="auto" className="mb-1">
                                     <span className="text-white me-2">
-                                        {castMembers.directors.includes(', ')
-                                            ? 'Diretores:'
-                                            : 'Diretor:'}
+                                        {castMembers.directors.includes(", ")
+                                            ? "Diretores:"
+                                            : "Diretor:"}
                                     </span>
                                     <span className="text-info bold">
                                         {castMembers.directors}
@@ -158,7 +131,7 @@ const MovieDetails = ({ movie, castMembers }: IMovieDetailsProps) => {
                                     <span
                                         className="text-info bold"
                                         style={{
-                                            textTransform: 'capitalize',
+                                            textTransform: "capitalize",
                                         }}
                                     >
                                         {languageNames.of(
@@ -179,7 +152,7 @@ const MovieDetails = ({ movie, castMembers }: IMovieDetailsProps) => {
                                     />
                                     {movie.budget > 0 &&
                                         priceSplitter(movie.budget)}
-                                    {movie.budget <= 0 && '-'}
+                                    {movie.budget <= 0 && "-"}
                                 </span>
                             </MDBCol>
                             <MDBCol sm="auto" className="mb-1">
@@ -194,7 +167,7 @@ const MovieDetails = ({ movie, castMembers }: IMovieDetailsProps) => {
                                     />
                                     {movie.revenue > 0 &&
                                         priceSplitter(movie.revenue)}
-                                    {movie.revenue <= 0 && '-'}
+                                    {movie.revenue <= 0 && "-"}
                                 </span>
                             </MDBCol>
                         </MDBRow>

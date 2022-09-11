@@ -1,4 +1,4 @@
-import '../../../styles/main.css';
+import "../../../styles/main.css";
 import {
     MDBContainer,
     MDBRow,
@@ -8,10 +8,11 @@ import {
     MDBCardImage,
     MDBCardBody,
     MDBCardText,
-} from 'mdb-react-ui-kit';
-import { IMovie, getSimilarMovies } from '../../../scripts/requests';
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+} from "mdb-react-ui-kit";
+import { getSimilarMovies } from "../../../scripts/requests";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { IMovie } from "../../../utils/interfaces";
 
 interface ISimilarMoviesProps {
     movieId: number;

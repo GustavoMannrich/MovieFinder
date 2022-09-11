@@ -1,6 +1,6 @@
-import { IMovies } from '../../scripts/requests';
-import { ActionType } from '../action-types';
-import { Action } from '../actions';
+import { IMovies } from "../../utils/interfaces";
+import { ActionType } from "../action-types";
+import { Action } from "../actions";
 
 interface RepositoriesState {
     loading: boolean;

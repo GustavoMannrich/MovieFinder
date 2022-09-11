@@ -3,21 +3,17 @@ import {
     MDBPagination,
     MDBPaginationItem,
     MDBPaginationLink,
-} from 'mdb-react-ui-kit';
-import { useActions } from '../../../hooks/useActions';
-import { IFilter } from '../../../scripts/requests';
-import { useTypedSelector } from '../../../hooks/useTypedSelector';
-import { useNavigate } from 'react-router-dom';
+} from "mdb-react-ui-kit";
+import { useActions } from "../../../hooks/useActions";
+import { IFilter } from "../../../utils/interfaces";
+import { useTypedSelector } from "../../../hooks/useTypedSelector";
+import { useNavigate } from "react-router-dom";
 
-interface IFiltro {
+interface ICustomPaginationProps {
     filterState: IFilter;
-    setFilterState: React.Dispatch<React.SetStateAction<IFilter>>;
 }
 
-const CustomPagination: React.FC<IFiltro> = ({
-    filterState,
-    setFilterState,
-}) => {
+const CustomPagination = ({ filterState }: ICustomPaginationProps) => {
     const { searchMovies } = useActions();
 
     const { data } = useTypedSelector((state) => state.repositories);
@@ -27,7 +23,7 @@ const CustomPagination: React.FC<IFiltro> = ({
     };
 
     function padTo2Digits(num: number) {
-        return num.toString().padStart(2, '0');
+        return num.toString().padStart(2, "0");
     }
 
     function dataAAAAMMDD(date: Date) {
@@ -35,7 +31,7 @@ const CustomPagination: React.FC<IFiltro> = ({
             date.getFullYear(),
             padTo2Digits(date.getMonth() + 1),
             padTo2Digits(date.getDate()),
-        ].join('-');
+        ].join("-");
     }
 
     let navigate = useNavigate();
@@ -82,7 +78,7 @@ const CustomPagination: React.FC<IFiltro> = ({
             dataFinal: filterState.dataFinal,
             voteCount: filterState.voteCount,
             keyword: filterState.keyword,
-            tipoBusca: '',
+            tipoBusca: "",
         });
     };
 

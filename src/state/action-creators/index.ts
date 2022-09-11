@@ -1,8 +1,8 @@
-import { Dispatch } from 'redux';
-import { ActionType } from '../action-types';
-import { Action } from '../actions';
-import { getMovies, getMoviesTrending } from '../../scripts/requests';
-import { IFilter } from '../../scripts/requests';
+import { Dispatch } from "redux";
+import { ActionType } from "../action-types";
+import { Action } from "../actions";
+import { getMovies, getMoviesTrending } from "../../scripts/requests";
+import { IFilter } from "../../utils/interfaces";
 
 export const searchMovies = (filtro: IFilter | null) => {
     return async (dispatch: Dispatch<Action>) => {

@@ -1,6 +1,6 @@
-import 'react-datepicker/dist/react-datepicker.css';
-import '../../../styles/filter.css';
-import '../../../styles/main.css';
+import "react-datepicker/dist/react-datepicker.css";
+import "../../../styles/filter.css";
+import "../../../styles/main.css";
 import {
     MDBBtn,
     MDBCard,
@@ -8,50 +8,41 @@ import {
     MDBIcon,
     MDBRow,
     MDBCol,
-    MDBTooltip,
     MDBCollapse,
     MDBRange,
-} from 'mdb-react-ui-kit';
-import { useEffect, useState } from 'react';
+} from "mdb-react-ui-kit";
+import { useEffect, useState } from "react";
 import {
-    IItems,
     getGeneros,
     getPeopleByKeyword,
     getPeopleByID,
+} from "../../../scripts/requests";
+import { useActions } from "../../../hooks/useActions";
+import {
+    IFilter,
+    ISelectItems,
     ISelectOption,
-} from '../../../scripts/requests';
-import { useActions } from '../../../hooks/useActions';
-import { IFilter } from '../../../scripts/requests';
-import Select, { MultiValue, SingleValue } from 'react-select';
-import AsyncSelect from 'react-select/async';
-import DatePicker from 'react-datepicker';
-import { registerLocale } from 'react-datepicker';
-import pt from 'date-fns/locale/pt';
-import { useNavigate } from 'react-router-dom';
+} from "../../../utils/interfaces";
+import DatePicker from "react-datepicker";
+import { registerLocale } from "react-datepicker";
+import pt from "date-fns/locale/pt";
+import { useNavigate } from "react-router-dom";
+import { sortOptions } from "../../../utils/constants";
+import { dataAAAAMMDD, formatDate } from "../../../utils/helpers";
+import Tooltip from "../../common/tooltip";
+import CustomSelect from "./custom-select";
+import CustomAsyncSelect from "./custom-async-select";
+import { MultiValue, SingleValue } from "react-select";
 
-registerLocale('pt', pt);
+registerLocale("pt", pt);
 
 interface IFiltro {
     filterState: IFilter;
     setFilterState: React.Dispatch<React.SetStateAction<IFilter>>;
 }
 
-const sortOptions: ISelectOption[] = [
-    { value: 0, label: 'Avaliação (maiores primeiro)' },
-    { value: 1, label: 'Avaliação (menores primeiro)' },
-    {
-        value: 2,
-        label: 'Data de lançamento (mais recentes primeiro)',
-    },
-    { value: 3, label: 'Data de lançamento (mais antigos primeiro)' },
-    { value: 4, label: 'Popularidade atual' },
-    { value: 5, label: 'Popularidade histórica' },
-    { value: 6, label: 'Receita gerada (maiores primeiro)' },
-    { value: 7, label: 'Receita gerada (menores primeiro)' },
-];
-
 const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
-    const [generos, setGeneros] = useState<IItems>([]);
+    const [generos, setGeneros] = useState<ISelectItems>([]);
     const [pessoa, setPessoa] = useState<ISelectOption[]>([]);
     const [genero, setGenero] = useState<ISelectOption[]>([]);
     const [sort, setSort] = useState<ISelectOption>(sortOptions[4]);
@@ -66,7 +57,7 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
 
     useEffect(() => {
         if (urlParams.toString()) {
-            let param = urlParams.get('pessoaParam');
+            let param = urlParams.get("pessoaParam");
             if (param) {
                 const fetchPeople = async (p: string) => {
                     setPessoa(await getPeopleByID(p));
@@ -75,22 +66,22 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                 fetchPeople(param);
             }
 
-            param = urlParams.get('dtiniParam');
+            param = urlParams.get("dtiniParam");
             if (param) {
                 setDataInicial(new Date(param));
             }
 
-            param = urlParams.get('dtfimParam');
+            param = urlParams.get("dtfimParam");
             if (param) {
                 setDataFinal(new Date(param));
             }
 
-            param = urlParams.get('voteCount');
+            param = urlParams.get("voteCount");
             if (param) {
                 setVoteCount(parseInt(param));
             }
 
-            param = urlParams.get('ordemParam');
+            param = urlParams.get("ordemParam");
             if (param) {
                 setSort(sortOptions[parseInt(param)]);
             }
@@ -105,9 +96,9 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
 
     useEffect(() => {
         if (urlParams.toString()) {
-            let param = urlParams.get('generoParam');
+            let param = urlParams.get("generoParam");
             if (param) {
-                let arrayGeneros = param.split(',');
+                let arrayGeneros = param.split(",");
                 let genres: ISelectOption[] = [];
 
                 generos.forEach((g) => {
@@ -130,7 +121,7 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
 
         if (newSearch) {
             searchParams = {
-                searchTerm: '',
+                searchTerm: "",
                 genero: getIds(genero),
                 page: 1,
                 sort: sort.value.toString(),
@@ -138,67 +129,67 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                 dataInicial: dataInicial,
                 dataFinal: dataFinal,
                 voteCount: voteCount,
-                keyword: '',
-                tipoBusca: 'Busca personalizada',
+                keyword: "",
+                tipoBusca: "Busca personalizada",
             };
         } else {
             let filters: IFilter = {
-                searchTerm: '',
-                genero: '',
+                searchTerm: "",
+                genero: "",
                 page: 1,
-                sort: '4',
-                pessoa: '',
+                sort: "4",
+                pessoa: "",
                 dataInicial: null,
                 dataFinal: null,
                 voteCount: 100,
-                keyword: '',
-                tipoBusca: 'Busca personalizada',
+                keyword: "",
+                tipoBusca: "Busca personalizada",
             };
 
-            let param = urlParams.get('searchTerm');
+            let param = urlParams.get("searchTerm");
             if (param) {
                 filters.searchTerm = param;
             }
 
-            param = urlParams.get('page');
+            param = urlParams.get("page");
             if (param) {
                 filters.page = parseInt(param);
             }
 
             // Se ta procurando por um termo, deve desconsiderar esses outros parâmetros
             if (!filters.searchTerm) {
-                param = urlParams.get('pessoaParam');
+                param = urlParams.get("pessoaParam");
                 if (param) {
                     filters.pessoa = param;
                 }
 
-                param = urlParams.get('dtiniParam');
+                param = urlParams.get("dtiniParam");
                 if (param) {
                     filters.dataInicial = new Date(param);
                 }
 
-                param = urlParams.get('dtfimParam');
+                param = urlParams.get("dtfimParam");
                 if (param) {
                     filters.dataFinal = new Date(param);
                 }
 
-                param = urlParams.get('voteCount');
+                param = urlParams.get("voteCount");
                 if (param) {
                     filters.voteCount = parseInt(param);
                 }
 
-                param = urlParams.get('ordemParam');
+                param = urlParams.get("ordemParam");
                 if (param) {
                     filters.sort =
                         sortOptions[parseInt(param)].value.toString();
                 }
 
-                param = urlParams.get('generoParam');
+                param = urlParams.get("generoParam");
                 if (param) {
                     filters.genero = param;
                 }
 
-                param = urlParams.get('keyword');
+                param = urlParams.get("keyword");
                 if (param) {
                     filters.keyword = param;
                 }
@@ -214,7 +205,7 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                 dataFinal: filters.dataFinal,
                 voteCount: filters.voteCount,
                 keyword: filters.keyword,
-                tipoBusca: 'Busca personalizada',
+                tipoBusca: "Busca personalizada",
             };
         }
 
@@ -258,11 +249,11 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
     };
 
     const getIds = (values: ISelectOption[]): string => {
-        let result = '';
+        let result = "";
 
         values.forEach((v) => {
-            if (result !== '') {
-                result += ',';
+            if (result !== "") {
+                result += ",";
             }
 
             result += v.value;
@@ -338,29 +329,9 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
         setIsDataFinalOpen(!isDataFinalOpen);
     };
 
-    function padTo2Digits(num: number) {
-        return num.toString().padStart(2, '0');
-    }
-
-    function dataDDMMAAAA(date: Date) {
-        return [
-            padTo2Digits(date.getDate()),
-            padTo2Digits(date.getMonth() + 1),
-            date.getFullYear(),
-        ].join('/');
-    }
-
-    function dataAAAAMMDD(date: Date) {
-        return [
-            date.getFullYear(),
-            padTo2Digits(date.getMonth() + 1),
-            padTo2Digits(date.getDate()),
-        ].join('-');
-    }
-
-    const formatDate = (placeHolder: string, data: Date | null): string => {
+    const dateStr = (placeHolder: string, data: Date | null): string => {
         if (data) {
-            return `${placeHolder}: ${dataDDMMAAAA(data)}`;
+            return `${placeHolder}: ${formatDate(data)}`;
         }
 
         return placeHolder;
@@ -370,225 +341,67 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
         <div className="centralizar">
             <MDBCard
                 className="p-1 m-3 filterCard transparentBG-noHover"
-                style={{ maxWidth: '1024px', width: '1024px' }}
+                style={{ maxWidth: "1024px", width: "1024px" }}
             >
                 <MDBCardBody>
                     <MDBCollapse show={showAdvancedSearch} className="mb-3">
                         <MDBRow className="ms-0 text-info">Ordenação</MDBRow>
                         <MDBRow>
                             <MDBCol>
-                                <Select
-                                    onChange={(value) => onSortChange(value)}
-                                    placeholder={'Ordenação'}
-                                    className="mt-1 mb-1"
-                                    noOptionsMessage={() => 'Nada encontrado'}
-                                    value={sortOptions[sort.value]}
+                                <CustomSelect
+                                    placeholder="Ordenação"
                                     options={sortOptions}
-                                    styles={{
-                                        container: (base) => ({
-                                            ...base,
-                                            zIndex: 10,
-                                        }),
-                                        valueContainer: (base) => ({
-                                            ...base,
-                                            padding: '3px',
-                                        }),
-                                        menu: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                            backgroundColor: 'black',
-                                            border: '2px solid rgb(57, 192, 237)',
-                                        }),
-                                        noOptionsMessage: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                        }),
-                                        placeholder: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                        }),
-                                        option: (base) => ({
-                                            ...base,
-                                            ':hover': {
-                                                backgroundColor:
-                                                    'rgba(57, 192, 237, 0.5)',
-                                            },
-                                        }),
-                                    }}
+                                    value={sortOptions[sort.value]}
+                                    zIndex={10}
+                                    onChange={(value) =>
+                                        onSortChange(
+                                            value as SingleValue<ISelectOption>
+                                        )
+                                    }
                                 />
                             </MDBCol>
                             <MDBCol md="auto" center>
-                                <MDBTooltip
-                                    tag="a"
-                                    placement="right"
-                                    wrapperProps={{ href: '#' }}
-                                    title="Ordenação dos filmes"
-                                >
-                                    <MDBIcon
-                                        color="white"
-                                        fas
-                                        icon="info-circle"
-                                        className="m-0"
-                                    />
-                                </MDBTooltip>
+                                <Tooltip tip="Ordenação dos filmes" />
                             </MDBCol>
                         </MDBRow>
                         <MDBRow className="ms-0 text-info">Gênero</MDBRow>
                         <MDBRow>
                             <MDBCol>
-                                <Select
-                                    onChange={(values) =>
-                                        onGeneroChange(values)
-                                    }
-                                    placeholder={'Todos os gêneros'}
-                                    className="mt-1 mb-1"
-                                    noOptionsMessage={() => 'Nada encontrado'}
-                                    isMulti
+                                <CustomSelect
+                                    placeholder="Todos os gêneros"
                                     options={getGeneroOptions()}
                                     value={genero}
-                                    styles={{
-                                        container: (base) => ({
-                                            ...base,
-                                            zIndex: 9,
-                                        }),
-                                        valueContainer: (base) => ({
-                                            ...base,
-                                            padding: '3px',
-                                        }),
-                                        menu: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                            backgroundColor: 'black',
-                                            border: '2px solid rgb(57, 192, 237)',
-                                        }),
-                                        noOptionsMessage: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                        }),
-                                        placeholder: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                        }),
-                                        option: (base) => ({
-                                            ...base,
-                                            ':hover': {
-                                                backgroundColor:
-                                                    'rgba(57, 192, 237, 0.5)',
-                                            },
-                                        }),
-                                        multiValue: (base) => ({
-                                            ...base,
-                                            backgroundColor:
-                                                'rgba(57, 192, 237, 0.8)',
-                                        }),
-                                        multiValueLabel: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                        }),
-                                        multiValueRemove: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                            ':hover': {
-                                                backgroundColor: 'white',
-                                            },
-                                        }),
-                                    }}
+                                    zIndex={9}
+                                    isMulti
+                                    onChange={(values) =>
+                                        onGeneroChange(
+                                            values as MultiValue<ISelectOption>
+                                        )
+                                    }
                                 />
                             </MDBCol>
                             <MDBCol md="auto" center>
-                                <MDBTooltip
-                                    tag="a"
-                                    placement="right"
-                                    wrapperProps={{ href: '#' }}
-                                    title="Serão retornados apenas os filmes que possuem todos os gêneros selecionados"
-                                >
-                                    <MDBIcon
-                                        color="white"
-                                        fas
-                                        icon="info-circle"
-                                        className="m-0"
-                                    />
-                                </MDBTooltip>
+                                <Tooltip tip="Serão retornados apenas os filmes que possuem todos os gêneros selecionados" />
                             </MDBCol>
                         </MDBRow>
                         <MDBRow className="ms-0 text-info">Atores</MDBRow>
                         <MDBRow>
                             <MDBCol>
-                                <AsyncSelect
-                                    placeholder={'Digite um nome...'}
-                                    className="mt-1 mb-1"
-                                    noOptionsMessage={() => 'Nada encontrado'}
-                                    onChange={(values) =>
-                                        onPessoaChange(values)
-                                    }
-                                    cacheOptions
+                                <CustomAsyncSelect
+                                    placeholder="Digite um nome..."
                                     loadOptions={peopleOptions}
-                                    defaultOptions
-                                    loadingMessage={() => 'Buscando...'}
-                                    isMulti
                                     value={pessoa}
-                                    styles={{
-                                        container: (base) => ({
-                                            ...base,
-                                            zIndex: 8,
-                                        }),
-                                        valueContainer: (base) => ({
-                                            ...base,
-                                            padding: '3px',
-                                        }),
-                                        menu: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                            backgroundColor: 'black',
-                                            border: '2px solid rgb(57, 192, 237)',
-                                        }),
-                                        noOptionsMessage: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                        }),
-                                        placeholder: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                        }),
-                                        option: (base) => ({
-                                            ...base,
-                                            ':hover': {
-                                                backgroundColor:
-                                                    'rgba(57, 192, 237, 0.5)',
-                                            },
-                                        }),
-                                        multiValue: (base) => ({
-                                            ...base,
-                                            backgroundColor:
-                                                'rgba(57, 192, 237, 0.8)',
-                                        }),
-                                        multiValueLabel: (base) => ({
-                                            ...base,
-                                            color: 'white',
-                                        }),
-                                        multiValueRemove: (base) => ({
-                                            ...base,
-                                            ':hover': {
-                                                backgroundColor: 'white',
-                                            },
-                                        }),
-                                    }}
+                                    zIndex={8}
+                                    isMulti={true}
+                                    onChange={(values) =>
+                                        onPessoaChange(
+                                            values as MultiValue<ISelectOption>
+                                        )
+                                    }
                                 />
                             </MDBCol>
                             <MDBCol md="auto" center>
-                                <MDBTooltip
-                                    tag="a"
-                                    placement="right"
-                                    wrapperProps={{ href: '#' }}
-                                    title="Serão retornados apenas os filmes em que todas as pessoas selecionadas participaram"
-                                >
-                                    <MDBIcon
-                                        color="white"
-                                        fas
-                                        icon="info-circle"
-                                        className="m-0"
-                                    />
-                                </MDBTooltip>
+                                <Tooltip tip="Serão retornados apenas os filmes em que todas as pessoas selecionadas participaram" />
                             </MDBCol>
                         </MDBRow>
                         <MDBRow className="ms-0 text-info">
@@ -604,10 +417,7 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                                         onClick={handleDataInicialClick}
                                         className="mt-1 me-2 active"
                                     >
-                                        {formatDate(
-                                            'Data inicial',
-                                            dataInicial
-                                        )}
+                                        {dateStr("Data inicial", dataInicial)}
                                     </MDBBtn>
                                     <MDBBtn
                                         noRipple
@@ -650,7 +460,7 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                                         onClick={handleDataFinalClick}
                                         className="mt-1 me-2 active"
                                     >
-                                        {formatDate('Data final', dataFinal)}
+                                        {dateStr("Data final", dataFinal)}
                                     </MDBBtn>
                                     <MDBBtn
                                         noRipple
@@ -705,19 +515,7 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                                 />
                             </MDBCol>
                             <MDBCol md="auto" center>
-                                <MDBTooltip
-                                    tag="a"
-                                    placement="right"
-                                    wrapperProps={{ href: '#' }}
-                                    title="Quantidade mínima de avaliações de usuário"
-                                >
-                                    <MDBIcon
-                                        color="white"
-                                        fas
-                                        icon="info-circle"
-                                        className="m-0"
-                                    />
-                                </MDBTooltip>
+                                <Tooltip tip="Quantidade mínima de avaliações de usuário" />
                             </MDBCol>
                         </MDBRow>
                         <MDBRow>
@@ -745,8 +543,8 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                                 fas
                                 icon={
                                     showAdvancedSearch
-                                        ? 'chevron-up'
-                                        : 'chevron-down'
+                                        ? "chevron-up"
+                                        : "chevron-down"
                                 }
                                 className="me-2"
                             />
@@ -755,8 +553,8 @@ const Filter: React.FC<IFiltro> = ({ filterState, setFilterState }) => {
                                 fas
                                 icon={
                                     showAdvancedSearch
-                                        ? 'chevron-up'
-                                        : 'chevron-down'
+                                        ? "chevron-up"
+                                        : "chevron-down"
                                 }
                                 className="ms-2"
                             />

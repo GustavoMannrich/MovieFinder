@@ -1,18 +1,17 @@
-import '../../styles/main.css';
+import "../../styles/main.css";
 import {
     MDBContainer,
     MDBNavbar,
     MDBNavbarBrand,
     MDBIcon,
     MDBInputGroup,
-} from 'mdb-react-ui-kit';
-import AsyncSelect from 'react-select/async';
-import { ISelectOption, getMoviesByKeyword } from '../../scripts/requests';
-import { components, DropdownIndicatorProps } from 'react-select';
-import { useState } from 'react';
+} from "mdb-react-ui-kit";
+import { getMoviesByKeyword } from "../../scripts/requests";
+import { components, DropdownIndicatorProps, SingleValue } from "react-select";
+import { ISelectOption } from "../../utils/interfaces";
+import CustomAsyncSelect from "../search/filter/custom-async-select";
 
 const CustomNavbar = () => {
-    const [movies, setMovies] = useState<ISelectOption[] | null>(null);
     var movieTimeout: NodeJS.Timeout;
 
     const getMoviesSearchArray = async (keyword: string) => {
@@ -28,13 +27,17 @@ const CustomNavbar = () => {
         return movies;
     };
 
-    const searchClick = (movie: any) => {
+    const searchClick = (movie: SingleValue<ISelectOption>) => {
+        if (!movie) {
+            return;
+        }
+
         if (movie.value > 0) {
             window.location.href = `http://localhost:3000/MovieFinder/movie/${movie.value}`;
         } else {
             const term = movie.label
-                .replace('Pesquisar por "', '')
-                .replace('"...', '');
+                .replace('Pesquisar por "', "")
+                .replace('"...', "");
             window.location.href = `http://localhost:3000/MovieFinder?searchTerm=${term}&page=1`;
         }
     };
@@ -65,44 +68,24 @@ const CustomNavbar = () => {
                     <span className="text-white ms-2">do Gugão</span>
                 </MDBNavbarBrand>
                 <MDBInputGroup tag="form" className="d-flex w-auto mb-1 mt-1">
-                    <AsyncSelect
-                        placeholder={'Pesquisar...'}
-                        noOptionsMessage={() => 'Nada encontrado'}
-                        cacheOptions
+                    <CustomAsyncSelect
+                        placeholder="Pesquisar..."
                         loadOptions={movieOptions}
-                        defaultOptions
-                        loadingMessage={() => 'Buscando...'}
+                        zIndex={20}
+                        isMulti={false}
                         components={{ DropdownIndicator }}
-                        styles={{
-                            container: (base) => ({
-                                ...base,
-                                zIndex: 11,
-                                minWidth: '400px',
-                                maxWidth: '500px',
-                            }),
-                            menu: (base) => ({
-                                ...base,
-                                color: 'white',
-                                backgroundColor: 'black',
-                                border: '2px solid rgb(57, 192, 237)',
-                            }),
-                            noOptionsMessage: (base) => ({
-                                ...base,
-                                color: 'white',
-                            }),
-                            placeholder: (base) => ({
-                                ...base,
-                                color: 'white',
-                            }),
-                            option: (base) => ({
-                                ...base,
-                                ':hover': {
-                                    backgroundColor: 'rgba(57, 192, 237, 0.5)',
-                                },
-                            }),
+                        containerStyle={{
+                            minWidth: "400px",
+                            maxWidth: "500px",
+                        }}
+                        inputStyle={{
+                            cursor: "text",
+                        }}
+                        dropdownIndicatorStyle={{
+                            cursor: "pointer",
                         }}
                         onChange={(movie) => {
-                            searchClick(movie);
+                            searchClick(movie as SingleValue<ISelectOption>);
                         }}
                     />
                 </MDBInputGroup>

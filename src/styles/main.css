@@ -125,6 +125,14 @@ div.card.text-center {
     color: white !important;
 }
 
+#react-select-2-input {
+    color: white !important;
+}
+
+#react-select-5-input {
+    color: white !important;
+}
+
 .video-container {
     overflow: hidden;
     position: relative;
